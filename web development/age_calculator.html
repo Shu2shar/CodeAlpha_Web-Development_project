@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Age Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        input[type="date"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #4e54c8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #373bb5;
+        }
+        
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        footer {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Age Calculator</h2>
+        <input type="date" id="dob" max="">
+        <button onclick="calculateAge()">Calculate Age</button>
+        <div id="result"></div>
+        <footer>💌: tsamritsar@gmail.com</footer>
+    </div>
+
+    <script>
+        // Set today's date as max for DOB
+        document.getElementById("dob").max = new Date().toISOString().split("T")[0];
+
+        function calculateAge() {
+            const dob = document.getElementById("dob").value;
+            const result = document.getElementById("result");
+
+            if (!dob) {
+                result.innerHTML = "❗ Please select your date of birth.";
+                return;
+            }
+
+            const dobDate = new Date(dob);
+            const today = new Date();
+
+
+            let years = today.getFullYear() - dobDate.getFullYear();
+            let months = today.getMonth() - dobDate.getMonth();
+            let days = today.getDate() - dobDate.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            result.innerHTML = `🎉You are <b>${years}</b> years, <b>${months}</b> months, and <b>${days}</b> days old.`;
+        }
+    </script>
+
+</body>
+
+</html>
