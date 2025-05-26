@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TO-Do List App - Easy Tutorials</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #153677, #4e085f);
+            padding: 10px;
+        }
+        
+        .todo-app {
+            width: 100%;
+            max-width: 540px;
+            background-color: #fff;
+            box-shadow: 10px 10px 40px rgba(186, 176, 176, 0.959);
+            margin: 100px auto 20px;
+            padding: 40px 30px 70px;
+            border-radius: 10px;
+        }
+        
+        .todo-app h2 {
+            font-size: 30px;
+            color: #002765;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .todo-app h2 i {
+            width: 30px;
+            margin-left: 15px;
+        }
+        
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #edeef0;
+            border-radius: 30px;
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .row input[type="text"] {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 15px;
+        }
+        
+        .row button {
+            border: none;
+            outline: none;
+            padding: 16px 50px;
+            background: #ff5945;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 40px;
+        }
+        
+        ul li {
+            list-style: none;
+            font-size: 17px;
+            padding: 12px 8px 12px 50px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        ul li::before {
+            content: '';
+            position: absolute;
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background-image: url(image/unchecked.png);
+            background-size: cover;
+            background-position: center;
+            top: 9px;
+            left: 8px;
+        }
+        
+        ul li.checked {
+            color: #555;
+            text-decoration: line-through;
+        }
+        
+        ul li.checked::before {
+            background-image: url(image/checked.png);
+        }
+        
+        ul li span {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
+            color: #555;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            display: none;
+        }
+        
+        ul li:hover span {
+            background: #edeef0;
+            display: block;
+        }
+        
+        .todo-app .button {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .button button {
+            padding: 10px 20px;
+            background: #ff5945;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 40px;
+            border: none;
+            outline: none;
+            transition: 0.3s;
+        }
+        
+        .button button:hover {
+            background: #ab211a;
+        }
+        
+        .edit-input {
+            width: 90%;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            position: absolute;
+            top: 0;
+            right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="todo-app">
+            <h2>To-Do List <i class="fa-solid fa-list"></i></h2>
+            <div class="row">
+                <input type="text" id="input-box" placeholder="Add your text..." />
+                <button onclick="addTask()">Add</button>
+            </div>
+
+            <div class="button">
+                <button onclick="selectAllTasks()" style="background: #007bff;">Select All Tasks</button>
+                <button onclick="deleteSelected()">Delete Selected Tasks</button>
+            </div>
+
+            <ul class="list_contaier" id="list_contaier"></ul>
+        </div>
+    </div>
+
+    <script>
+        const inputBox = document.getElementById("input-box");
+        const list_contaier = document.getElementById("list_contaier");
+
+        function addTask() {
+            if (inputBox.value.trim() === "") {
+                alert("You must write something!");
+            } else {
+                const li = document.createElement("li");
+                li.innerText = inputBox.value;
+                list_contaier.appendChild(li);
+                addDeleteButton(li);
+                addEditFunctionality(li);
+            }
+            inputBox.value = "";
+            saveDate();
+        }
+
+        function addDeleteButton(li) {
+            let span = document.createElement("span");
+            span.innerHTML = "\u00d7";
+            li.appendChild(span);
+        }
+
+        function addEditFunctionality(li) {
+            li.setAttribute("title", "Double-click to edit");
+
+            li.addEventListener("dblclick", function() {
+                let currentText = li.firstChild.textContent.trim();
+                let input = document.createElement("input");
+                input.type = "text";
+                input.value = currentText;
+                input.className = "edit-input";
+                li.innerHTML = "";
+                li.appendChild(input);
+                input.focus();
+
+                input.addEventListener("keypress", function(e) {
+                    if (e.key === "Enter") {
+                        if (input.value.trim() !== "") {
+                            li.innerText = input.value;
+                            addDeleteButton(li);
+                            addEditFunctionality(li);
+                            saveDate();
+                        } else {
+                            alert("Task cannot be empty.");
+                        }
+                    }
+                });
+
+                input.addEventListener("blur", function() {
+                    if (input.value.trim() !== "") {
+                        li.innerText = input.value;
+                        addDeleteButton(li);
+                        addEditFunctionality(li);
+                        saveDate();
+                    }
+                });
+            });
+        }
+
+        list_contaier.addEventListener("click", function(e) {
+            if (e.target.tagName === "LI") {
+                e.target.classList.toggle("checked");
+                saveDate();
+            } else if (e.target.tagName === "SPAN") {
+                e.target.parentElement.remove();
+                saveDate();
+            }
+        });
+
+        function saveDate() {
+            localStorage.setItem("data", list_contaier.innerHTML);
+        }
+
+        function showTask() {
+            list_contaier.innerHTML = localStorage.getItem("data");
+            const allTasks = list_contaier.querySelectorAll("li");
+            allTasks.forEach(task => addEditFunctionality(task));
+        }
+
+        showTask();
+
+        function deleteSelected() {
+            const tasks = list_contaier.querySelectorAll("li.checked");
+            if (tasks.length === 0) {
+                alert("No selected (checked) tasks to delete.");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${tasks.length} selected task(s)?`)) {
+                tasks.forEach(task => task.remove());
+                saveDate();
+            }
+        }
+
+        function selectAllTasks() {
+            const tasks = list_contaier.querySelectorAll("li");
+            if (tasks.length === 0) {
+                alert("No tasks available.");
+                return;
+            }
+
+            const allChecked = Array.from(tasks).every(task => task.classList.contains("checked"));
+
+            tasks.forEach(task => {
+                if (allChecked) {
+                    task.classList.remove("checked");
+                } else {
+                    task.classList.add("checked");
+                }
+            });
+
+            saveDate();
+        }
+
+        inputBox.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                addTask();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
